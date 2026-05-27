@@ -1,6 +1,6 @@
 import { Contract, nativeToScVal, scValToNative, xdr, TransactionBuilder as TB, Account } from "@stellar/stellar-sdk";
 import { rpc, NETWORK, BASE_FEE } from "./stellar";
-import type { PlayerVitals } from "@/types";
+import type { PlayerVitals, ValidatorInfo } from "@/types";
 
 const CONTRACT_ID = process.env.NEXT_PUBLIC_CONTRACT_ID!;
 const contract = new Contract(CONTRACT_ID);
@@ -112,8 +112,43 @@ export async function filterPlayers(region: string, position: string, minLevel: 
   ]);
 }
 
-export async function getValidators(): Promise<string[]> {
+/**
+ * Retrieve all validators currently authorized in the contract.
+ *
+ * @returns An array of ValidatorInfo objects containing validator address and join timestamp.
+ */
+export async function getValidators(): Promise<ValidatorInfo[]> {
   return simulateTx("get_validators", []);
+}
+
+/**
+ * Build a transaction to add a new validator to the contract.
+ * Only callable by the contract admin wallet.
+ *
+ * @param adminKey - The admin wallet's Stellar public key.
+ * @param address - The Stellar public key of the validator to add.
+ * @returns The prepared transaction XDR for signing.
+ * @throws {ContractError} Unauthorized (10) if called by a non-admin wallet.
+ */
+export async function buildAddValidator(adminKey: string, address: string) {
+  return buildTx("add_validator", [
+    nativeToScVal(address, { type: "address" }),
+  ], adminKey);
+}
+
+/**
+ * Build a transaction to remove a validator from the contract.
+ * Only callable by the contract admin wallet.
+ *
+ * @param adminKey - The admin wallet's Stellar public key.
+ * @param address - The Stellar public key of the validator to remove.
+ * @returns The prepared transaction XDR for signing.
+ * @throws {ContractError} Unauthorized (10) if called by a non-admin wallet.
+ */
+export async function buildRemoveValidator(adminKey: string, address: string) {
+  return buildTx("remove_validator", [
+    nativeToScVal(address, { type: "address" }),
+  ], adminKey);
 }
 
 export async function buildRevokeMilestone(validatorKey: string, playerId: string, milestoneId: string) {
