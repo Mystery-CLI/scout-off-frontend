@@ -22,6 +22,7 @@ function ScoutDashboardContent() {
   const searchParams = useSearchParams();
 
   const [filter, setFilter] = useState<PlayerFilter>({});
+  const debouncedFilter = useDebounce(filter, 300);
   const { players, loading, search } = useScout();
   const hasLoaded = useRef(false);
 
