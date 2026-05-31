@@ -37,21 +37,35 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({
   children,
-  params: { locale },
+  params,
 }: {
   children: React.ReactNode;
-  params: { locale: string };
+  params?: { locale?: string };
 }) {
+  const locale = params?.locale ?? "en";
   const messages = await getMessages();
 
   return (
     <html lang={locale}>
+      <head>
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#0f172a" />
+        <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
+      </head>
       <body>
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-brand-green focus:text-black focus:px-6 focus:py-3 focus:rounded-lg focus:font-semibold"
+        >
+          Skip to main content
+        </a>
         <NextIntlClientProvider locale={locale} messages={messages}>
           <WalletProvider>
             <ToastProvider>
               <Navbar />
-              <main className="max-w-6xl mx-auto px-4 py-8">{children}</main>
+              <main id="main-content" className="max-w-6xl mx-auto px-4 py-8">
+                {children}
+              </main>
             </ToastProvider>
           </WalletProvider>
         </NextIntlClientProvider>
