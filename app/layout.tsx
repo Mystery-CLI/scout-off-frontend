@@ -3,6 +3,9 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import { ToastProvider } from "@/components/ui/Toast";
 import { WalletProvider } from "@/context/WalletContext";
+import { Analytics } from "@vercel/analytics/react";
+
+const isTestEnv = process.env.NODE_ENV === "test";
 
 export const metadata: Metadata = {
   title: "ScoutOff — Decentralized Football Scouting",
@@ -43,6 +46,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <main className="max-w-6xl mx-auto px-4 py-8">{children}</main>
           </ToastProvider>
         </WalletProvider>
+        {!isTestEnv && <Analytics />}
       </body>
     </html>
   );
