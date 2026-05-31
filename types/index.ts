@@ -2,10 +2,10 @@
 export type ProgressLevel = 0 | 1 | 2 | 3;
 
 export const PROGRESS_LABELS: Record<ProgressLevel, string> = {
-  0: "Unverified",
-  1: "Verified Identity",
-  2: "Performance Milestones",
-  3: "Elite Tier",
+  0: 'Unverified',
+  1: 'Verified Identity',
+  2: 'Performance Milestones',
+  3: 'Elite Tier',
 };
 
 // ── Player ────────────────────────────────────────────────────────────────────
@@ -20,16 +20,16 @@ export interface PlayerVitals {
 export interface Milestone {
   id: string;
   description: string;
-  evidenceHash: string;   // IPFS CID of supporting media
-  validator: string;      // Stellar address of approving validator
-  timestamp: number;      // Unix timestamp from ledger
+  evidenceHash: string; // IPFS CID of supporting media
+  validator: string; // Stellar address of approving validator
+  timestamp: number; // Unix timestamp from ledger
 }
 
 export interface Player {
   id: string;
   wallet: string;
   vitals: PlayerVitals;
-  ipfsHash: string;       // Latest highlight reel CID
+  ipfsHash: string; // Latest highlight reel CID
   progressLevel: ProgressLevel;
   milestones: Milestone[];
   createdAt: number;
@@ -59,10 +59,7 @@ export interface ValidatorInfo {
 }
 
 // ── Scout ─────────────────────────────────────────────────────────────────────
-export enum SubscriptionTier {
-  Basic = "basic",
-  Pro = "pro"
-}
+export type SubscriptionTier = 'basic' | 'pro' | 'elite';
 
 export interface Scout {
   id: string;
@@ -70,8 +67,8 @@ export interface Scout {
   name: string;
   organisation: string;
   subscriptionTier: SubscriptionTier;
-  subscriptionExpiry: number;   // Unix timestamp
-  contactedPlayers: string[];   // player IDs
+  subscriptionExpiry: number; // Unix timestamp
+  contactedPlayers: string[]; // player IDs
 }
 
 // ── Subscription ──────────────────────────────────────────────────────────────
@@ -79,12 +76,9 @@ export interface Scout {
  * Represents a scout's subscription details.
  */
 export interface Subscription {
-  /** Stellar address of the scout. */
-  scout: string;
-  /** The subscription tier the scout is subscribed to. */
+  scout: string; // Stellar address
   tier: SubscriptionTier;
-  /** Unix timestamp (seconds) when the subscription expires. */
-  expiresAt: number;
+  expiresAt: number; // Unix timestamp
 }
 
 // ── Filter ────────────────────────────────────────────────────────────────────
