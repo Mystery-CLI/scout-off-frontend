@@ -38,8 +38,7 @@ function PlayerCard({ player }: { player: Player }) {
       {/* Avatar */}
       <div className="w-16 h-16 rounded-full bg-gray-700 overflow-hidden" aria-hidden="true">
         {ipfsHash && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
+          <Image
             src={`${process.env.NEXT_PUBLIC_IPFS_GATEWAY}/${ipfsHash}`}
             alt=""
             className="w-full h-full object-cover"
