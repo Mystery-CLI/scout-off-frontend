@@ -1,10 +1,11 @@
-import type { Metadata } from 'next';
-import './globals.css';
-import Navbar from '@/components/Navbar';
-import { ToastProvider } from '@/components/ui/Toast';
-import { WalletProvider } from '@/context/WalletContext';
+import type { Metadata } from "next";
+import "./globals.css";
+import Navbar from "@/components/Navbar";
+import { ToastProvider } from "@/components/ui/Toast";
+import { WalletProvider } from "@/context/WalletContext";
+import { Analytics } from "@vercel/analytics/react";
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://scoutoff.app";
+const isTestEnv = process.env.NODE_ENV === "test";
 
 export const metadata: Metadata = {
   title: 'ScoutOff — Decentralized Football Scouting',
@@ -60,6 +61,7 @@ export default function RootLayout({
             <main id="main-content" className="max-w-6xl mx-auto px-4 py-8">{children}</main>
           </ToastProvider>
         </WalletProvider>
+        {!isTestEnv && <Analytics />}
       </body>
     </html>
   );
