@@ -7,6 +7,7 @@ import { getPlayer } from '@/lib/contract';
 import PlayerCard from '@/components/PlayerCard';
 import PlayerCardSkeleton from '@/components/PlayerCardSkeleton';
 import ErrorBoundary from '@/components/ui/ErrorBoundary';
+import { AFRICAN_REGIONS } from '@/lib/regions';
 import type { Player, PlayerFilter, ProgressLevel } from '@/types';
 
 const POSITIONS = ['GK', 'CB', 'LB', 'RB', 'CM', 'CAM', 'LW', 'RW', 'ST'];
@@ -22,7 +23,7 @@ function ScoutDashboardContent() {
   const searchParams = useSearchParams();
 
   const [filter, setFilter] = useState<PlayerFilter>({});
-  const debouncedFilter = useDebounce(filter, 300);
+
   const { players, loading, search } = useScout();
   const hasLoaded = useRef(false);
 
@@ -52,9 +53,7 @@ function ScoutDashboardContent() {
     e.preventDefault();
     hasLoaded.current = false;
     setPage(1);
-    search(filter).then(() => {
-      hasLoaded.current = true;
-    });
+    search(filter);
   }
 
   useEffect(() => {
@@ -150,13 +149,20 @@ function ScoutDashboardContent() {
       >
         <div className="flex flex-col gap-1">
           <label className="text-xs text-gray-400">Region</label>
-          <input
+          <select
             className="input w-40"
-            placeholder="e.g. Africa"
+            value={filter.region ?? ''}
             onChange={(e) =>
               setFilter((f) => ({ ...f, region: e.target.value }))
             }
-          />
+          >
+            <option value="">All regions</option>
+            {AFRICAN_REGIONS.map(({ label, value }) => (
+              <option key={value} value={value}>
+                {label}
+              </option>
+            ))}
+          </select>
         </div>
         <div className="flex flex-col gap-1">
           <label className="text-xs text-gray-400">Position</label>
