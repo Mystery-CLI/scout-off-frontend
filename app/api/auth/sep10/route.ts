@@ -1,7 +1,6 @@
-import { Keypair, Utils, Networks } from '@stellar/stellar-sdk';
+import { Keypair, WebAuth, Networks } from '@stellar/stellar-sdk';
 import { NextRequest, NextResponse } from 'next/server';
 
-// In production, this should be a secure environment variable.
 const SECRET_KEY =
   process.env.STELLAR_SECRET_KEY ||
   'SDAV7XESHT63OQQ3Q6L27W462O4ZORZCOV4UOOXF6S2A6SST2YJXY63G';
@@ -22,12 +21,13 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const challengeXdr = Utils.buildChallengeTx(
+    const challengeXdr = WebAuth.buildChallengeTx(
       serverKeypair,
       account,
       DOMAIN,
-      300, // 5 minutes timeout
+      300,
       NETWORK,
+      DOMAIN,
     );
     return NextResponse.json({ transaction: challengeXdr });
   } catch (error) {
@@ -49,23 +49,21 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { tx } = Utils.verifyChallengeTx(
+    // readChallengeTx validates the server signature and extracts the client account ID
+    const { clientAccountID } = WebAuth.readChallengeTx(
       transaction,
       serverKeypair.publicKey(),
       NETWORK,
-      [DOMAIN],
+      DOMAIN,
+      DOMAIN,
     );
 
-    const clientPublicKey = tx.source;
-
-    // Use the public key as the session value for simplicity,
-    // or you could sign a JWT here if needed.
     const response = NextResponse.json({
       success: true,
-      publicKey: clientPublicKey,
+      publicKey: clientAccountID,
     });
 
-    response.cookies.set('session', clientPublicKey, {
+    response.cookies.set('session', clientAccountID, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',

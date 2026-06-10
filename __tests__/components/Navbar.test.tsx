@@ -41,6 +41,18 @@ import { usePathname } from 'next/navigation';
 const mockUseWallet = useWallet as unknown as jest.Mock;
 const mockUsePathname = usePathname as unknown as jest.Mock;
 
+function setup(pathname: string) {
+  mockUseWallet.mockReturnValue({
+    publicKey: null,
+    isConnecting: false,
+    connect: jest.fn(),
+    disconnect: jest.fn(),
+    signAndSubmit: jest.fn(),
+  });
+  mockUsePathname.mockReturnValue(pathname);
+  render(<Navbar />);
+}
+
 describe('Navbar', () => {
   beforeEach(() => {
     jest.resetAllMocks();

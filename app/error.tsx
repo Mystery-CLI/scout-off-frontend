@@ -9,10 +9,12 @@ interface ErrorPageProps {
 function reportToSentry(error: Error) {
   try {
     if (!process.env.NEXT_PUBLIC_SENTRY_DSN) return;
-    // Dynamically import to avoid bundling Sentry when DSN is absent
-    import("@sentry/nextjs").then(({ captureException }) => {
-      captureException(error);
-    }).catch(() => {/* Sentry unavailable — silent */});
+    // Dynamic import via variable to avoid TS type error when @sentry/nextjs is not installed
+    const pkg = '@sentry/nextjs';
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (import(/* webpackIgnore: true */ pkg) as Promise<any>)
+      .then(({ captureException }) => captureException(error))
+      .catch(() => {/* Sentry unavailable — silent */});
   } catch {
     // Never let reporting crash the error UI
   }

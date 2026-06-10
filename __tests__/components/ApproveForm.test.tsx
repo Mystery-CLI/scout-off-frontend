@@ -49,7 +49,7 @@ function renderComponent(
     connect: jest.fn(),
     disconnect: jest.fn(),
     signAndSubmit: jest.fn(),
-  });
+  } as any);
 
   mockedUseValidator.mockReturnValue({
     isValidator,
@@ -115,7 +115,7 @@ describe("ApproveForm", () => {
       connect: jest.fn(),
       disconnect: jest.fn(),
       signAndSubmit,
-    });
+    } as any);
 
     render(<ApproveForm onSuccess={onSuccess} />);
 

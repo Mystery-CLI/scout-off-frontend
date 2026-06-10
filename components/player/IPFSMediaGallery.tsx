@@ -66,7 +66,6 @@ function IPFSMediaItem({ cid }: IPFSMediaItemProps) {
           className="w-full h-full object-cover"
           poster={mediaUrl.replace(/\.(mp4|webm)$/, ".jpg")}
           controls
-          loading="lazy"
           onClick={() => setIsPlaying(!isPlaying)}
         >
           {isVisible && isPlaying && (
@@ -100,7 +99,6 @@ function IPFSMediaItem({ cid }: IPFSMediaItemProps) {
         alt={`IPFS media ${cid}`}
         fill
         className="object-cover"
-        loading="lazy"
         unoptimized
       />
     </div>

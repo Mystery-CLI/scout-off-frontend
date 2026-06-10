@@ -7,6 +7,7 @@ import { useValidator } from '@/hooks/useValidator';
 import { getPlayer } from '@/lib/contract';
 import { PROGRESS_LABELS } from '@/types';
 import type { Player } from '@/types';
+import TransactionStatus, { TxStatus } from '@/components/ui/TransactionStatus';
 
 interface ApproveFormProps {
   onSuccess: () => void;

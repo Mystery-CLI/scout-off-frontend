@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { Player } from '@/types';
 import { useWallet } from '@/hooks/useWallet';
 import useIsPaused from '@/hooks/useIsPaused';
-import { ipfsUrl } from '@/lib/ipfs';
 import { updateProfile } from '@/lib/contract';
 import { useToast } from '@/components/ui/Toast';
 import VideoUpload from '@/components/ui/VideoUpload';
@@ -21,6 +20,7 @@ export default function UpdateProfileForm({
 }: UpdateProfileFormProps) {
   const { publicKey } = useWallet();
   const { show } = useToast();
+  const isPaused = useIsPaused();
   const [newCid, setNewCid] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -34,7 +34,7 @@ export default function UpdateProfileForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (useIsPaused()) {
+    if (isPaused) {
       show({
         message: 'Transactions are currently disabled',
         variant: 'error',
@@ -60,6 +60,9 @@ export default function UpdateProfileForm({
     }
   };
 
+  const ipfsGateway =
+    process.env.NEXT_PUBLIC_IPFS_GATEWAY ?? 'https://gateway.pinata.cloud/ipfs';
+  const ipfsMediaUrl = `${ipfsGateway}/${player.ipfsHash}`;
   const truncatedCid = `${player.ipfsHash.slice(0, 8)}…${player.ipfsHash.slice(-8)}`;
 
   return (
@@ -77,7 +80,7 @@ export default function UpdateProfileForm({
             Current Media CID
           </label>
           <a
-            href={ipfsUrl(player.ipfsHash)}
+            href={ipfsMediaUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="text-brand-green hover:underline font-mono text-sm"

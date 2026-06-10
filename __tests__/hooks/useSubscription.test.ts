@@ -2,7 +2,6 @@
 import React from "react";
 import { renderHook, act } from "@testing-library/react";
 import { useSubscription } from "@/hooks/useSubscription";
-import { SubscriptionTier } from "@/types";
 
 // Mock useWallet
 jest.mock("@/hooks/useWallet", () => ({
@@ -37,7 +36,7 @@ describe("useSubscription", () => {
 
     const mockSubscription = {
       scout: mockPublicKey,
-      tier: SubscriptionTier.Basic,
+      tier: 'basic',
       expiresAt: Date.now() / 1000 - 1000, // 1000 seconds in past
     };
     mockGetSubscription.mockResolvedValue(mockSubscription);
@@ -61,7 +60,7 @@ describe("useSubscription", () => {
 
     const mockSubscription = {
       scout: mockPublicKey,
-      tier: SubscriptionTier.Basic,
+      tier: 'basic',
       expiresAt: Date.now() / 1000 + 1000, // 1000 seconds in future
     };
     mockGetSubscription.mockResolvedValue(mockSubscription);
@@ -86,7 +85,7 @@ describe("useSubscription", () => {
     const mockXdr = "AAAAA...";
     const mockSubscription = {
       scout: mockPublicKey,
-      tier: SubscriptionTier.Pro,
+      tier: 'pro',
       expiresAt: Date.now() / 1000 + 1000,
     };
     mockBuildSubscribe.mockResolvedValue(mockXdr);
@@ -99,10 +98,10 @@ describe("useSubscription", () => {
     });
 
     await act(async () => {
-      await result.current.subscribe(SubscriptionTier.Pro);
+      await result.current.subscribe('pro');
     });
 
-    expect(mockBuildSubscribe).toHaveBeenCalledWith(mockPublicKey, SubscriptionTier.Pro);
+    expect(mockBuildSubscribe).toHaveBeenCalledWith(mockPublicKey, 'pro');
     expect(mockSignAndSubmit).toHaveBeenCalledWith(mockXdr);
     expect(mockGetSubscription).toHaveBeenCalledTimes(2);
   });
@@ -126,7 +125,7 @@ describe("useSubscription", () => {
 
     await expect(
       act(async () => {
-        await result.current.subscribe(SubscriptionTier.Basic);
+        await result.current.subscribe('basic');
       })
     ).rejects.toThrow("InsufficientFee");
 

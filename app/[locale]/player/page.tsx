@@ -1,6 +1,8 @@
 "use client";
 import { useState } from "react";
 import { useRequireWallet } from "@/hooks/useRequireWallet";
+import { useWallet } from "@/hooks/useWallet";
+import { usePlayer } from "@/hooks/usePlayer";
 import ProgressBar from "@/components/ProgressBar";
 import { uploadToIPFS } from "@/lib/ipfs";
 import { buildRegisterPlayer } from "@/lib/contract";

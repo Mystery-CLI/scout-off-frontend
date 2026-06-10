@@ -1,4 +1,3 @@
-"use client";
 import React from "react";
 import { renderHook, act } from "@testing-library/react";
 import { WalletProvider, useWalletContext as useWallet } from "@/context/WalletContext";

@@ -65,7 +65,7 @@ function renderComponent(onSuccess = jest.fn()) {
     connect: jest.fn(),
     disconnect: jest.fn(),
     signAndSubmit: jest.fn(),
-  });
+  } as any);
 
   return render(
     <ToastProvider>
@@ -91,7 +91,7 @@ describe('UpdateProfileForm', () => {
       connect: jest.fn(),
       disconnect: jest.fn(),
       signAndSubmit: jest.fn(),
-    });
+    } as any);
 
     render(
       <ToastProvider>

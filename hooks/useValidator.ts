@@ -6,11 +6,11 @@ import {
   buildApproveMilestone,
   buildRevokeMilestone,
 } from '@/lib/contract';
-import type { Player } from '@/types';
+import type { ValidatorInfo, Player } from '@/types';
 
 const CACHE_TTL_MS = 60_000;
 
-let cachedValidators: string[] | null = null;
+let cachedValidators: ValidatorInfo[] | null = null;
 let cacheTimestamp = 0;
 
 export function invalidateValidatorCache() {
@@ -18,7 +18,7 @@ export function invalidateValidatorCache() {
   cacheTimestamp = 0;
 }
 
-async function fetchValidators(): Promise<string[]> {
+async function fetchValidators(): Promise<ValidatorInfo[]> {
   const now = Date.now();
   if (cachedValidators && now - cacheTimestamp < CACHE_TTL_MS)
     return cachedValidators;
@@ -44,7 +44,7 @@ export function useValidator(walletAddress?: string | null) {
     }
     setChecking(true);
     fetchValidators()
-      .then((list) => setIsValidator(list.includes(publicKey)))
+      .then((list) => setIsValidator(list.some((v) => v.address === publicKey)))
       .catch(() => setIsValidator(false))
       .finally(() => setChecking(false));
   }, [publicKey]);

@@ -73,14 +73,14 @@ const ADAPTERS: Record<WalletProvider, WalletAdapter> = {
       return typeof window !== 'undefined' && 'albedo' in window;
     },
     getPublicKey: async () => {
-      const result = await albedo.publicKey();
+      const result = await albedo.publicKey({});
       if (!result || !result.pubkey)
         throw new Error('Albedo returned no public key');
       return result.pubkey;
     },
     signTransaction: async (xdr: string) => {
-      const network = NETWORK.includes('TESTNET') ? 'TESTNET' : 'PUBLIC';
-      const result = await albedo.signTransaction({ xdr, network });
+      const network = NETWORK.includes('TESTNET') ? 'testnet' : 'public';
+      const result = await albedo.tx({ xdr, network });
       if (!result || !result.signed_envelope_xdr)
         throw new Error('Albedo signing failed');
       return result.signed_envelope_xdr;

@@ -1,8 +1,18 @@
-import { memo } from 'react';
+import { memo, useCallback } from 'react';
 import Link from 'next/link';
-import type { Player } from '@/types';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import type { Player, ProgressLevel } from '@/types';
 import { PROGRESS_LABELS } from '@/types';
 import ProgressBar from './ProgressBar';
+import Badge from '@/components/ui/Badge';
+
+const LEVEL_VARIANT: Record<ProgressLevel, 'level0' | 'level1' | 'level2' | 'level3'> = {
+  0: 'level0',
+  1: 'level1',
+  2: 'level2',
+  3: 'level3',
+};
 
 function PlayerCard({ player }: { player: Player }) {
   const { id, vitals, progressLevel, ipfsHash } = player;
@@ -17,13 +27,13 @@ function PlayerCard({ player }: { player: Player }) {
   }, [router, href]);
 
   const handleKeyDown = useCallback(
-    (e: KeyboardEvent<HTMLDivElement>) => {
-      if (e.key === "Enter" || e.key === " ") {
+    (e: React.KeyboardEvent<HTMLDivElement>) => {
+      if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
         navigate();
       }
     },
-    [navigate]
+    [navigate],
   );
 
   return (
@@ -40,7 +50,9 @@ function PlayerCard({ player }: { player: Player }) {
         {ipfsHash && (
           <Image
             src={`${process.env.NEXT_PUBLIC_IPFS_GATEWAY}/${ipfsHash}`}
-            alt=""
+            alt={vitals.name}
+            width={64}
+            height={64}
             className="w-full h-full object-cover"
           />
         )}
@@ -64,7 +76,7 @@ function PlayerCard({ player }: { player: Player }) {
       <ProgressBar level={progressLevel} />
 
       {/* Decorative link — navigation is handled by the card wrapper */}
-      <a
+      <Link
         href={href}
         tabIndex={-1}
         aria-hidden="true"
@@ -72,7 +84,7 @@ function PlayerCard({ player }: { player: Player }) {
         onClick={(e) => e.preventDefault()}
       >
         View Profile
-      </a>
+      </Link>
     </div>
   );
 }

@@ -5,7 +5,6 @@ import { useWallet } from "@/hooks/useWallet";
 import ProgressBar from "@/components/ProgressBar";
 import { getPlayer } from "@/lib/contract";
 import { buildPayToContact } from "@/lib/contract";
-import { ipfsUrl } from "@/lib/ipfs";
 import type { Player } from "@/types";
 
 export default function PlayerProfile() {
@@ -40,7 +39,7 @@ export default function PlayerProfile() {
         <div className="w-20 h-20 rounded-full bg-gray-700 overflow-hidden shrink-0">
           {player.ipfsHash && (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={ipfsUrl(player.ipfsHash)} alt={player.vitals.name} className="w-full h-full object-cover" />
+            <img src={`${process.env.NEXT_PUBLIC_IPFS_GATEWAY ?? 'https://gateway.pinata.cloud/ipfs'}/${player.ipfsHash}`} alt={player.vitals.name} className="w-full h-full object-cover" />
           )}
         </div>
         <div className="flex-1">
