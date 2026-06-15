@@ -1,6 +1,18 @@
-import { Contract, nativeToScVal, scValToNative, xdr, TransactionBuilder as TB, Account } from "@stellar/stellar-sdk";
-import { rpc, NETWORK, BASE_FEE } from "./stellar";
-import type { PlayerVitals, ValidatorInfo, ContactDetails } from "@/types";
+import {
+  Contract,
+  nativeToScVal,
+  scValToNative,
+  xdr,
+  TransactionBuilder as TB,
+  Account,
+} from '@stellar/stellar-sdk';
+import { rpc, NETWORK, BASE_FEE } from './stellar';
+import type {
+  PlayerVitals,
+  ValidatorInfo,
+  ContactDetails,
+  SubscriptionTier,
+} from '@/types';
 
 const CONTRACT_ID = process.env.NEXT_PUBLIC_CONTRACT_ID!;
 const contract = new Contract(CONTRACT_ID);
@@ -16,7 +28,11 @@ async function captureContractError(error: unknown, context: Record<string, unkn
 }
 
 // ── Write helper (requires a real funded account) ─────────────────────────────
-async function buildTx(method: string, args: xdr.ScVal[], sourcePublicKey: string) {
+async function buildTx(
+  method: string,
+  args: xdr.ScVal[],
+  sourcePublicKey: string,
+) {
   const account = await rpc.getAccount(sourcePublicKey);
   const tx = new TB(account, { fee: BASE_FEE, networkPassphrase: NETWORK })
     .addOperation(contract.call(method, ...args))
@@ -28,23 +44,34 @@ async function buildTx(method: string, args: xdr.ScVal[], sourcePublicKey: strin
 
 // ── Read-only helper (uses a dummy account — no ledger lookup needed) ─────────
 async function simulateTx(method: string, args: xdr.ScVal[]) {
-  const dummyAccount = new Account("GAAZI4TCR3TY5OJHCTJC2A4QSY6CJWJH5IAJTGKIN2ER7LBNVKOCCWN", "0");
+  const dummyAccount = new Account(
+    'GAAZI4TCR3TY5OJHCTJC2A4QSY6CJWJH5IAJTGKIN2ER7LBNVKOCCWN',
+    '0',
+  );
   const tx = new TB(dummyAccount, { fee: BASE_FEE, networkPassphrase: NETWORK })
     .addOperation(contract.call(method, ...args))
     .setTimeout(30)
     .build();
   const result = await rpc.simulateTransaction(tx);
-  if ("result" in result) return scValToNative(result.result!.retval);
+  if ('result' in result) return scValToNative(result.result!.retval);
   throw new Error(`Simulation failed: ${JSON.stringify(result)}`);
 }
 
 // ── Player ────────────────────────────────────────────────────────────────────
-export async function buildRegisterPlayer(wallet: string, vitals: PlayerVitals, ipfsHash: string) {
-  return buildTx("register_player", [
-    nativeToScVal(wallet, { type: "address" }),
-    nativeToScVal(vitals),
-    nativeToScVal(ipfsHash, { type: "string" }),
-  ], wallet);
+export async function buildRegisterPlayer(
+  wallet: string,
+  vitals: PlayerVitals,
+  ipfsHash: string,
+) {
+  return buildTx(
+    'register_player',
+    [
+      nativeToScVal(wallet, { type: 'address' }),
+      nativeToScVal(vitals),
+      nativeToScVal(ipfsHash, { type: 'string' }),
+    ],
+    wallet,
+  );
 }
 
 /**
@@ -60,36 +87,58 @@ export async function buildRegisterPlayer(wallet: string, vitals: PlayerVitals, 
  *                         the player's registered wallet address. This check is performed on-chain
  *                         when the transaction is executed.
  */
-export async function buildUpdateProfile(wallet: string, playerId: string, ipfsHash: string) {
-  return buildTx("update_profile", [
-    nativeToScVal(playerId, { type: "string" }),
-    nativeToScVal(ipfsHash, { type: "string" }),
-  ], wallet);
+export async function buildUpdateProfile(
+  wallet: string,
+  playerId: string,
+  ipfsHash: string,
+) {
+  return buildTx(
+    'update_profile',
+    [
+      nativeToScVal(playerId, { type: 'string' }),
+      nativeToScVal(ipfsHash, { type: 'string' }),
+    ],
+    wallet,
+  );
 }
 
 export async function getPlayer(playerId: string) {
-  return simulateTx("get_player", [nativeToScVal(playerId, { type: "string" })]);
+  return simulateTx('get_player', [
+    nativeToScVal(playerId, { type: 'string' }),
+  ]);
 }
 
 // ── Validator ─────────────────────────────────────────────────────────────────
-export async function buildApproveMilestone(validatorKey: string, playerId: string, milestone: string) {
-  return buildTx("approve_milestone", [
-    nativeToScVal(playerId, { type: "string" }),
-    nativeToScVal(milestone, { type: "string" }),
-    nativeToScVal(validatorKey, { type: "address" }),
-  ], validatorKey);
+export async function buildApproveMilestone(
+  validatorKey: string,
+  playerId: string,
+  milestone: string,
+) {
+  return buildTx(
+    'approve_milestone',
+    [
+      nativeToScVal(playerId, { type: 'string' }),
+      nativeToScVal(milestone, { type: 'string' }),
+      nativeToScVal(validatorKey, { type: 'address' }),
+    ],
+    validatorKey,
+  );
 }
 
 export async function checkIsValidator(address: string) {
-  return simulateTx("is_validator", [nativeToScVal(address, { type: "address" })]);
+  return simulateTx('is_validator', [
+    nativeToScVal(address, { type: 'address' }),
+  ]);
 }
 
 export async function getMilestoneHistory(playerId: string) {
-  return simulateTx("get_milestone_history", [nativeToScVal(playerId, { type: "string" })]);
+  return simulateTx('get_milestone_history', [
+    nativeToScVal(playerId, { type: 'string' }),
+  ]);
 }
 
 export async function getContractHealth() {
-  return simulateTx("health", []);
+  return simulateTx('health', []);
 }
 
 /**
@@ -105,98 +154,197 @@ export async function getContractHealth() {
 export async function registerPlayer(
   wallet: string,
   vitals: PlayerVitals,
-  ipfsHash: string
+  ipfsHash: string,
 ): Promise<string> {
-  const { signTransaction } = await import("@stellar/freighter-api");
+  const { signTransaction } = await import('@stellar/freighter-api');
   const xdrTx = await buildTx(
-    "register_player",
+    'register_player',
     [
-      nativeToScVal(wallet, { type: "address" }),
+      nativeToScVal(wallet, { type: 'address' }),
       nativeToScVal(vitals),
-      nativeToScVal(ipfsHash, { type: "string" }),
+      nativeToScVal(ipfsHash, { type: 'string' }),
     ],
-    wallet
+    wallet,
   );
-  const signedTxXdr = await signTransaction(xdrTx, { networkPassphrase: NETWORK });
-  const { Transaction } = await import("@stellar/stellar-sdk");
-  const result = await rpc.sendTransaction(new Transaction(signedTxXdr, NETWORK));
-  if (result.status === "ERROR") {
-    const err = new Error(`ContractError: ${JSON.stringify(result)}`);
-    await captureContractError(err, { method: "register_player", status: result.status });
-    throw err;
-  }
+  const signedTxXdr = await signTransaction(xdrTx, {
+    networkPassphrase: NETWORK,
+  });
+  const { Transaction } = await import('@stellar/stellar-sdk');
+  const result = await rpc.sendTransaction(
+    new Transaction(signedTxXdr, NETWORK),
+  );
+  if (result.status === 'ERROR')
+    throw new Error(`ContractError: ${JSON.stringify(result)}`);
   const getResult = await rpc.getTransaction(result.hash);
-  if ("returnValue" in getResult) return scValToNative(getResult.returnValue!) as string;
-  const noReturnErr = new Error(`ContractError: transaction did not return a value`);
-  await captureContractError(noReturnErr, { method: "register_player", hash: result.hash });
-  throw noReturnErr;
+  if ('returnValue' in getResult)
+    return scValToNative(getResult.returnValue!) as string;
+  throw new Error(`ContractError: transaction did not return a value`);
 }
 
-export async function updateProfile(wallet: string, playerId: string, ipfsHash: string) {
-  const { signTransaction } = await import("@stellar/freighter-api");
+export async function updateProfile(
+  wallet: string,
+  playerId: string,
+  ipfsHash: string,
+) {
+  const { signTransaction } = await import('@stellar/freighter-api');
   const xdrTx = await buildTx(
-    "update_profile",
+    'update_profile',
     [
-      nativeToScVal(playerId, { type: "string" }),
-      nativeToScVal(ipfsHash, { type: "string" }),
+      nativeToScVal(playerId, { type: 'string' }),
+      nativeToScVal(ipfsHash, { type: 'string' }),
     ],
-    wallet
+    wallet,
   );
-  const signedTxXdr = await signTransaction(xdrTx, { networkPassphrase: NETWORK });
-  const { Transaction } = await import("@stellar/stellar-sdk");
-  const result = await rpc.sendTransaction(new Transaction(signedTxXdr, NETWORK));
-  if (result.status === "ERROR") {
-    const err = new Error(`ContractError: ${JSON.stringify(result)}`);
-    await captureContractError(err, { method: "update_profile", playerId, status: result.status });
-    throw err;
-  }
+  const signedTxXdr = await signTransaction(xdrTx, {
+    networkPassphrase: NETWORK,
+  });
+  const { Transaction } = await import('@stellar/stellar-sdk');
+  const result = await rpc.sendTransaction(
+    new Transaction(signedTxXdr, NETWORK),
+  );
+  if (result.status === 'ERROR')
+    throw new Error(`ContractError: ${JSON.stringify(result)}`);
   return result;
 }
 
 // ── Scout ─────────────────────────────────────────────────────────────────────
+
+/**
+ * Contract error codes for scout payment flows.
+ *
+ * | Code | Name                | Description                                              |
+ * |------|---------------------|----------------------------------------------------------|
+ * |  7   | InsufficientFee     | The XLM fee sent is below the required amount for the    |
+ * |      |                     | requested subscription tier or pay-to-contact action.    |
+ * |  8   | SubscriptionExpired | The scout's active subscription has passed its expiry    |
+ * |      |                     | timestamp and must be renewed before further access.     |
+ * |  9   | ContractPaused      | The contract has been administratively paused; all write |
+ * |      |                     | operations are blocked until it is unpaused.             |
+ */
+export const SCOUT_ERROR_CODES = {
+  InsufficientFee: 7,
+  SubscriptionExpired: 8,
+  ContractPaused: 9,
+} as const;
+
 export async function buildPayToContact(scoutKey: string, playerId: string) {
-  return buildTx("pay_to_contact", [
-    nativeToScVal(scoutKey, { type: "address" }),
-    nativeToScVal(playerId, { type: "string" }),
-  ], scoutKey);
+  return buildTx(
+    'pay_to_contact',
+    [
+      nativeToScVal(scoutKey, { type: 'address' }),
+      nativeToScVal(playerId, { type: 'string' }),
+    ],
+    scoutKey,
+  );
 }
 
 /**
- * Execute a pay-to-contact transaction via Freighter and retrieve contact details.
+ * Subscribe a scout to a tier by signing and submitting the transaction via Freighter.
  *
- * @param scoutKey - The scout's Stellar public key (source + auth).
- * @param playerId - The player ID to unlock contact details for.
- * @returns The ContactDetails (email, phone, telegram) for the player.
- * @throws {ContractError} SubscriptionExpired (11) if the scout's subscription is not active.
- * @throws {ContractError} InsufficientFee (3) if the subscription tier does not cover this action.
- * @throws {ContractError} NotInitialized (2) if the contract is not set up.
+ * The function handles XLM fee approval by preparing the transaction through the RPC
+ * node (which attaches the required fee footprint) before presenting it to Freighter
+ * for signing. The signed transaction is then submitted to the network.
+ *
+ * @param scout - The scout's Stellar public key (source account + auth signer).
+ * @param tier  - The subscription tier to purchase: `"basic"`, `"pro"`, or `"elite"`.
+ * @returns A Promise that resolves when the subscription transaction is confirmed.
+ *
+ * @throws {ContractError} InsufficientFee (7)     — The XLM amount attached is below the
+ *                                                    required fee for the chosen tier.
+ * @throws {ContractError} SubscriptionExpired (8) — An existing subscription has expired;
+ *                                                    the contract requires a fresh purchase.
+ * @throws {ContractError} ContractPaused (9)      — All write operations are blocked while
+ *                                                    the contract is administratively paused.
  */
-export async function payToContact(scoutKey: string, playerId: string): Promise<ContactDetails> {
-  const { signTransaction } = await import("@stellar/freighter-api");
-  const xdrTx = await buildTx("pay_to_contact", [
-    nativeToScVal(scoutKey, { type: "address" }),
-    nativeToScVal(playerId, { type: "string" }),
-  ], scoutKey);
-  const signedTxXdr = await signTransaction(xdrTx, { networkPassphrase: NETWORK });
-  const { Transaction } = await import("@stellar/stellar-sdk");
-  const result = await rpc.sendTransaction(new Transaction(signedTxXdr, NETWORK));
-  if (result.status === "ERROR") {
-    const err = new Error(`ContractError: ${JSON.stringify(result)}`);
-    await captureContractError(err, { method: "pay_to_contact", playerId, status: result.status });
-    throw err;
+export async function subscribe(
+  scout: string,
+  tier: SubscriptionTier,
+): Promise<void> {
+  const { signTransaction } = await import('@stellar/freighter-api');
+  // buildTx calls rpc.prepareTransaction which attaches the XLM fee footprint
+  const xdrTx = await buildTx(
+    'subscribe',
+    [
+      nativeToScVal(scout, { type: 'address' }),
+      nativeToScVal(tier, { type: 'string' }),
+    ],
+    scout,
+  );
+  const signedTxXdr = await signTransaction(xdrTx, {
+    networkPassphrase: NETWORK,
+  });
+  const { Transaction } = await import('@stellar/stellar-sdk');
+  const result = await rpc.sendTransaction(
+    new Transaction(signedTxXdr, NETWORK),
+  );
+  if (result.status === 'ERROR') {
+    throw new Error(`ContractError: ${JSON.stringify(result)}`);
   }
+  // Wait for confirmation
   const getResult = await rpc.getTransaction(result.hash);
-  if ("returnValue" in getResult) return scValToNative(getResult.returnValue!) as ContactDetails;
-  const noReturnErr = new Error(`ContractError: transaction did not return contact details`);
-  await captureContractError(noReturnErr, { method: "pay_to_contact", playerId, hash: result.hash });
-  throw noReturnErr;
+  if ('status' in getResult && getResult.status === 'FAILED') {
+    throw new Error(`ContractError: subscribe transaction failed`);
+  }
 }
 
-export async function filterPlayers(region: string, position: string, minLevel: number) {
-  return simulateTx("filter_players", [
-    nativeToScVal(region, { type: "string" }),
-    nativeToScVal(position, { type: "string" }),
-    nativeToScVal(minLevel, { type: "u32" }),
+/**
+ * Pay to unlock a player's contact details, signing and submitting via Freighter.
+ *
+ * The function handles XLM fee approval by preparing the transaction through the RPC
+ * node before presenting it to Freighter for signing. On success the contract returns
+ * the player's `ContactDetails` object.
+ *
+ * @param scout    - The scout's Stellar public key (source account + auth signer).
+ * @param playerID - The unique player ID whose contact details should be unlocked.
+ * @returns A Promise resolving to the player's {@link ContactDetails} (email, phone, telegram).
+ *
+ * @throws {ContractError} InsufficientFee (7)     — The XLM fee attached is below the
+ *                                                    required amount for this action.
+ * @throws {ContractError} SubscriptionExpired (8) — The scout's subscription has expired
+ *                                                    and must be renewed before contacting players.
+ * @throws {ContractError} ContractPaused (9)      — All write operations are blocked while
+ *                                                    the contract is administratively paused.
+ */
+export async function payToContact(
+  scout: string,
+  playerID: string,
+): Promise<ContactDetails> {
+  const { signTransaction } = await import('@stellar/freighter-api');
+  // buildTx calls rpc.prepareTransaction which attaches the XLM fee footprint
+  const xdrTx = await buildTx(
+    'pay_to_contact',
+    [
+      nativeToScVal(scout, { type: 'address' }),
+      nativeToScVal(playerID, { type: 'string' }),
+    ],
+    scout,
+  );
+  const signedTxXdr = await signTransaction(xdrTx, {
+    networkPassphrase: NETWORK,
+  });
+  const { Transaction } = await import('@stellar/stellar-sdk');
+  const result = await rpc.sendTransaction(
+    new Transaction(signedTxXdr, NETWORK),
+  );
+  if (result.status === 'ERROR') {
+    throw new Error(`ContractError: ${JSON.stringify(result)}`);
+  }
+  const getResult = await rpc.getTransaction(result.hash);
+  if ('returnValue' in getResult) {
+    return scValToNative(getResult.returnValue!) as ContactDetails;
+  }
+  throw new Error(`ContractError: payToContact did not return contact details`);
+}
+
+export async function filterPlayers(
+  region: string,
+  position: string,
+  minLevel: number,
+) {
+  return simulateTx('filter_players', [
+    nativeToScVal(region, { type: 'string' }),
+    nativeToScVal(position, { type: 'string' }),
+    nativeToScVal(minLevel, { type: 'u32' }),
   ]);
 }
 
@@ -206,7 +354,7 @@ export async function filterPlayers(region: string, position: string, minLevel: 
  * @returns An array of ValidatorInfo objects containing validator address and join timestamp.
  */
 export async function getValidators(): Promise<ValidatorInfo[]> {
-  return simulateTx("get_validators", []);
+  return simulateTx('get_validators', []);
 }
 
 /**
@@ -219,9 +367,11 @@ export async function getValidators(): Promise<ValidatorInfo[]> {
  * @throws {ContractError} Unauthorized (10) if called by a non-admin wallet.
  */
 export async function buildAddValidator(adminKey: string, address: string) {
-  return buildTx("add_validator", [
-    nativeToScVal(address, { type: "address" }),
-  ], adminKey);
+  return buildTx(
+    'add_validator',
+    [nativeToScVal(address, { type: 'address' })],
+    adminKey,
+  );
 }
 
 /**
@@ -234,25 +384,67 @@ export async function buildAddValidator(adminKey: string, address: string) {
  * @throws {ContractError} Unauthorized (10) if called by a non-admin wallet.
  */
 export async function buildRemoveValidator(adminKey: string, address: string) {
-  return buildTx("remove_validator", [
-    nativeToScVal(address, { type: "address" }),
-  ], adminKey);
+  return buildTx(
+    'remove_validator',
+    [nativeToScVal(address, { type: 'address' })],
+    adminKey,
+  );
 }
 
-export async function buildRevokeMilestone(validatorKey: string, playerId: string, milestoneId: string) {
-  return buildTx("revoke_milestone", [
-    nativeToScVal(playerId, { type: "string" }),
-    nativeToScVal(milestoneId, { type: "string" }),
-  ], validatorKey);
+export async function buildRevokeMilestone(
+  validatorKey: string,
+  playerId: string,
+  milestoneId: string,
+) {
+  return buildTx(
+    'revoke_milestone',
+    [
+      nativeToScVal(playerId, { type: 'string' }),
+      nativeToScVal(milestoneId, { type: 'string' }),
+    ],
+    validatorKey,
+  );
 }
 
 export async function getSubscription(scout: string) {
-  return simulateTx("get_subscription", [nativeToScVal(scout, { type: "address" })]);
+  return simulateTx('get_subscription', [
+    nativeToScVal(scout, { type: 'address' }),
+  ]);
 }
 
+/** @deprecated Use {@link subscribe} for the full signed write flow. */
 export async function buildSubscribe(scoutKey: string, tier: string) {
-  return buildTx("subscribe", [
-    nativeToScVal(scoutKey, { type: "address" }),
-    nativeToScVal(tier, { type: "string" }),
-  ], scoutKey);
+  return buildTx(
+    'subscribe',
+    [
+      nativeToScVal(scoutKey, { type: 'address' }),
+      nativeToScVal(tier, { type: 'string' }),
+    ],
+    scoutKey,
+  );
+}
+
+// ── Admin ─────────────────────────────────────────────────────────────────────
+export async function getPlatformFees(): Promise<number> {
+  return simulateTx('get_platform_fees', []);
+}
+
+export async function buildWithdrawFees(adminKey: string) {
+  return buildTx(
+    'withdraw_fees',
+    [nativeToScVal(adminKey, { type: 'address' })],
+    adminKey,
+  );
+}
+
+export async function buildPauseContract(adminKey: string) {
+  return buildTx('pause_contract', [], adminKey);
+}
+
+export async function buildUnpauseContract(adminKey: string) {
+  return buildTx('unpause_contract', [], adminKey);
+}
+
+export async function getContractPaused(): Promise<boolean> {
+  return simulateTx('is_paused', []);
 }

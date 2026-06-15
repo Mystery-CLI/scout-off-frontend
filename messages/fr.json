@@ -1,53 +1,86 @@
 {
-  "navbar": {
-    "brand": "ScoutOff",
-    "scoutDashboard": "Tableau de bord Scout",
-    "playerDashboard": "Tableau de bord Joueur",
-    "maintenance": "⚠️ ScoutOff est actuellement en maintenance. Les actions d'écriture sont temporairement désactivées."
+  "app_title": "ScoutOff",
+  "nav": {
+    "scout_dashboard": "Tableau de bord des scouts",
+    "player_dashboard": "Tableau de bord des joueurs",
+    "maintenance_warning": "ScoutOff est actuellement en maintenance. Les actions d'écriture sont temporairement désactivées."
+  },
+  "common": {
+    "connect_wallet": "Connecter le portefeuille",
+    "disconnect": "Déconnecter",
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "success": "Succès",
+    "warning": "Avertissement",
+    "info": "Information",
+    "close": "Fermer",
+    "submit": "Soumettre",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "back": "Retour",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "sort": "Trier",
+    "clear": "Effacer"
+  },
+  "language": {
+    "select_language": "Sélectionner la langue",
+    "english": "English",
+    "french": "Français",
+    "swahili": "Kiswahili"
+  },
+  "scout_dashboard": {
+    "title": "Tableau de bord des scouts",
+    "welcome": "Bienvenue sur le tableau de bord des scouts",
+    "description": "Gérer les joueurs et les essais",
+    "recent_activity": "Activité récente",
+    "players": "Joueurs",
+    "trials": "Essais",
+    "statistics": "Statistiques",
+    "milestones": "Jalons",
+    "search_player": "Rechercher un joueur par adresse de portefeuille",
+    "player_not_found": "Joueur non trouvé",
+    "no_players": "Aucun joueur trouvé"
+  },
+  "player_dashboard": {
+    "title": "Tableau de bord des joueurs",
+    "welcome": "Bienvenue sur le tableau de bord des joueurs",
+    "description": "Voir votre profil et vos progrès",
+    "profile": "Profil",
+    "milestones": "Jalons",
+    "achievements": "Réalisations",
+    "progress": "Progrès",
+    "stats": "Statistiques"
   },
   "wallet": {
     "connect": "Connecter le portefeuille",
-    "connecting": "Connexion…",
-    "disconnect": "Déconnecter"
-  },
-  "home": {
-    "headline": "Découvrez les Talents du Football",
-    "headlineHighlight": "On-Chain",
-    "subheadline": "Profils de joueurs infalsifiables, jalons vérifiables et connexions directes scout-joueur — propulsés par les contrats intelligents Stellar Soroban.",
-    "ctaPlayer": "Je suis un Joueur",
-    "ctaScout": "Je suis un Scout"
-  },
-  "player": {
-    "dashboard": "Tableau de bord Joueur",
-    "loading": "Chargement…",
-    "createProfile": "Créer votre profil",
-    "namePlaceholder": "Nom complet",
-    "positionPlaceholder": "Poste (ex. AT, MC)",
-    "regionPlaceholder": "Région / Pays",
-    "agePlaceholder": "Âge",
-    "highlightLabel": "Vidéo de présentation / photo",
-    "registerButton": "S'inscrire sur Stellar",
-    "registeringButton": "Inscription…",
-    "milestoneHistory": "Historique des jalons",
-    "noMilestones": "Aucun jalon pour l'instant."
-  },
-  "validator": {
-    "dashboard": "Tableau de bord Validateur",
-    "welcome": "Bienvenue, validateur {address}. Les jalons en attente apparaîtront ici."
-  },
-  "progress": {
-    "0": "Non vérifié",
-    "1": "Identité vérifiée",
-    "2": "Jalons de performance",
-    "3": "Niveau élite"
+    "connected": "Connecté",
+    "disconnect": "Déconnecter le portefeuille",
+    "balance": "Solde",
+    "address": "Adresse",
+    "invalid_address": "Adresse Stellar invalide",
+    "connection_failed": "Échec de la connexion au portefeuille"
   },
   "errors": {
-    "walletRequired": "Veuillez connecter votre portefeuille pour continuer.",
-    "contractError": "Une erreur de contrat s'est produite. Veuillez réessayer.",
-    "unknownError": "Une erreur inattendue s'est produite."
+    "not_found": "Non trouvé",
+    "unauthorized": "Non autorisé",
+    "forbidden": "Interdit",
+    "internal_error": "Erreur interne du serveur",
+    "network_error": "Erreur réseau",
+    "contract_error": "L'appel du contrat a échoué",
+    "wallet_error": "L'opération du portefeuille a échoué"
   },
-  "meta": {
-    "title": "ScoutOff — Scouting Football Décentralisé",
-    "description": "Profils de joueurs infalsifiables et vérification des jalons on-chain sur Stellar."
+  "actions": {
+    "refresh": "Actualiser",
+    "export": "Exporter",
+    "import": "Importer",
+    "download": "Télécharger",
+    "upload": "Télécharger",
+    "view_details": "Afficher les détails",
+    "view_more": "Afficher plus"
   }
 }

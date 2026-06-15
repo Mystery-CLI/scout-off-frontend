@@ -1,23 +1,27 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { Player } from "@/types";
-import { useWallet } from "@/hooks/useWallet";
-import { ipfsUrl } from "@/lib/ipfs";
-import { updateProfile } from "@/lib/contract";
-import { useToast } from "@/components/ui/Toast";
-import VideoUpload from "@/components/ui/VideoUpload";
-import Button from "@/components/ui/Button";
+import { useState } from 'react';
+import { Player } from '@/types';
+import { useWallet } from '@/hooks/useWallet';
+import useIsPaused from '@/hooks/useIsPaused';
+import { updateProfile } from '@/lib/contract';
+import { useToast } from '@/components/ui/Toast';
+import VideoUpload from '@/components/ui/VideoUpload';
+import Button from '@/components/ui/Button';
 
 interface UpdateProfileFormProps {
   player: Player;
   onSuccess: () => void;
 }
 
-export default function UpdateProfileForm({ player, onSuccess }: UpdateProfileFormProps) {
+export default function UpdateProfileForm({
+  player,
+  onSuccess,
+}: UpdateProfileFormProps) {
   const { publicKey } = useWallet();
   const { show } = useToast();
-  const [newCid, setNewCid] = useState<string>("");
+  const isPaused = useIsPaused();
+  const [newCid, setNewCid] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (!publicKey || publicKey !== player.wallet) {
@@ -30,22 +34,35 @@ export default function UpdateProfileForm({ player, onSuccess }: UpdateProfileFo
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isPaused) {
+      show({
+        message: 'Transactions are currently disabled',
+        variant: 'error',
+      });
+      return;
+    }
     if (!newCid || isSubmitting) return;
 
     setIsSubmitting(true);
     try {
       await updateProfile(publicKey, player.id, newCid);
-      show({ message: "Profile media updated successfully", variant: "success" });
-      setNewCid("");
+      show({
+        message: 'Profile media updated successfully',
+        variant: 'success',
+      });
+      setNewCid('');
       onSuccess();
     } catch (err) {
-      console.error("Update profile failed:", err);
-      show({ message: "Failed to update profile media", variant: "error" });
+      console.error('Update profile failed:', err);
+      show({ message: 'Failed to update profile media', variant: 'error' });
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  const ipfsGateway =
+    process.env.NEXT_PUBLIC_IPFS_GATEWAY ?? 'https://gateway.pinata.cloud/ipfs';
+  const ipfsMediaUrl = `${ipfsGateway}/${player.ipfsHash}`;
   const truncatedCid = `${player.ipfsHash.slice(0, 8)}…${player.ipfsHash.slice(-8)}`;
 
   return (
@@ -63,7 +80,7 @@ export default function UpdateProfileForm({ player, onSuccess }: UpdateProfileFo
             Current Media CID
           </label>
           <a
-            href={ipfsUrl(player.ipfsHash)}
+            href={ipfsMediaUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="text-brand-green hover:underline font-mono text-sm"
@@ -74,7 +91,8 @@ export default function UpdateProfileForm({ player, onSuccess }: UpdateProfileFo
 
         <div className="bg-amber-900/20 border border-amber-900/50 p-4 rounded-lg">
           <p className="text-sm text-amber-500 font-medium">
-            Warning: Updating your profile will replace your current media on-chain.
+            Warning: Updating your profile will replace your current media
+            on-chain.
           </p>
         </div>
 
