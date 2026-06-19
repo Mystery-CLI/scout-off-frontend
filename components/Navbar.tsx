@@ -12,8 +12,8 @@ const NAV_LINKS = [
 ];
 
 const LOCALES = [
-  { code: "en", label: "EN" },
-  { code: "fr", label: "FR" },
+  { code: 'en', label: 'EN' },
+  { code: 'fr', label: 'FR' },
 ];
 
 export default function Navbar() {

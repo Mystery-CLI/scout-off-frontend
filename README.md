@@ -453,35 +453,35 @@ Test coverage targets:
 
 ## Implementation Status
 
-| Area                   | Status         | Notes                                                         |
-| ---------------------- | -------------- | ------------------------------------------------------------- |
-| Config & tooling       | ✅ Complete    | package.json, tsconfig, tailwind, CI, Husky, lint-staged      |
-| Types                  | ✅ Complete    | Player, Scout, Milestone, ValidatorInfo, Subscription, Contact|
-| Lib layer              | ✅ Complete    | stellar, contract, ipfs, api, sanitize, regions, positions    |
-| Wallet context         | ✅ Complete    | Freighter / Albedo / LOBSTR, SEP-10, balance, session restore |
-| Shared components      | ✅ Complete    | Navbar, WalletButton, ProgressBar, PlayerCard, Skeleton       |
-| UI primitives          | ✅ Complete    | Modal, Toast, Badge, Button, Spinner, Select, Tooltip,        |
-|                        |                | VideoUpload, ConfirmDialog, EmptyState, TransactionStatus,    |
-|                        |                | ErrorBoundary                                                 |
-| Player components      | ✅ Complete    | PlayerProfileForm, UpdateProfileForm, MilestoneList,          |
-|                        |                | MilestoneTimeline, IPFSMediaGallery                           |
-| Player dashboard       | ✅ Complete    | Register + milestone history                                  |
-| Player profile page    | ✅ Complete    | Public view + pay-to-contact                                  |
-| Scout dashboard        | ✅ Complete    | Filter form + wallet search + paginated player grid           |
-| Scout subscription     | ✅ Complete    | Tier selection + XLM payment via `useSubscription`            |
-| Validator components   | ✅ Complete    | ApproveForm, RevokeForm, ValidatorPlayerSearch                |
-| Validator dashboard    | ⚠️ Shell only  | Page exists; milestone approval UI not yet wired              |
-| Admin panel            | ✅ Complete    | Add/remove validators, withdraw fees, pause/unpause           |
-| Hooks                  | ✅ Complete    | usePlayer, useScout, useValidator, useSubscription,           |
-|                        |                | usePayToContact, useMilestoneHistory, useIPFSUpload,          |
-|                        |                | useContractHealth, useIsPaused, useDebounce, useRequireWallet |
-| Off-chain indexer      | ✅ Complete    | IndexerMetrics with tests in `packages/indexer/`              |
-| Frontend tests         | ✅ Complete    | 11 component tests, 3 hook tests, 5 lib tests                 |
-| i18n                   | ✅ Complete    | English, French, Swahili via next-intl                        |
-| Scout public profile   | 🔲 Not started | `app/[locale]/scout/[id]/` folder created                     |
-| Scout ContactModal     | 🔲 Not started | ActivityFeed + ScoutProfileCard exist; modal pending          |
-| Trial offer UI         | 🔲 Not started | `log_trial_offer` contract fn ready; no UI                    |
-| PWA raster icons       | ⚠️ Partial     | icon.svg present; PNG icons not yet generated                 |
+| Area                 | Status         | Notes                                                          |
+| -------------------- | -------------- | -------------------------------------------------------------- |
+| Config & tooling     | ✅ Complete    | package.json, tsconfig, tailwind, CI, Husky, lint-staged       |
+| Types                | ✅ Complete    | Player, Scout, Milestone, ValidatorInfo, Subscription, Contact |
+| Lib layer            | ✅ Complete    | stellar, contract, ipfs, api, sanitize, regions, positions     |
+| Wallet context       | ✅ Complete    | Freighter / Albedo / LOBSTR, SEP-10, balance, session restore  |
+| Shared components    | ✅ Complete    | Navbar, WalletButton, ProgressBar, PlayerCard, Skeleton        |
+| UI primitives        | ✅ Complete    | Modal, Toast, Badge, Button, Spinner, Select, Tooltip,         |
+|                      |                | VideoUpload, ConfirmDialog, EmptyState, TransactionStatus,     |
+|                      |                | ErrorBoundary                                                  |
+| Player components    | ✅ Complete    | PlayerProfileForm, UpdateProfileForm, MilestoneList,           |
+|                      |                | MilestoneTimeline, IPFSMediaGallery                            |
+| Player dashboard     | ✅ Complete    | Register + milestone history                                   |
+| Player profile page  | ✅ Complete    | Public view + pay-to-contact                                   |
+| Scout dashboard      | ✅ Complete    | Filter form + wallet search + paginated player grid            |
+| Scout subscription   | ✅ Complete    | Tier selection + XLM payment via `useSubscription`             |
+| Validator components | ✅ Complete    | ApproveForm, RevokeForm, ValidatorPlayerSearch                 |
+| Validator dashboard  | ⚠️ Shell only  | Page exists; milestone approval UI not yet wired               |
+| Admin panel          | ✅ Complete    | Add/remove validators, withdraw fees, pause/unpause            |
+| Hooks                | ✅ Complete    | usePlayer, useScout, useValidator, useSubscription,            |
+|                      |                | usePayToContact, useMilestoneHistory, useIPFSUpload,           |
+|                      |                | useContractHealth, useIsPaused, useDebounce, useRequireWallet  |
+| Off-chain indexer    | ✅ Complete    | IndexerMetrics with tests in `packages/indexer/`               |
+| Frontend tests       | ✅ Complete    | 11 component tests, 3 hook tests, 5 lib tests                  |
+| i18n                 | ✅ Complete    | English, French, Swahili via next-intl                         |
+| Scout public profile | 🔲 Not started | `app/[locale]/scout/[id]/` folder created                      |
+| Scout ContactModal   | 🔲 Not started | ActivityFeed + ScoutProfileCard exist; modal pending           |
+| Trial offer UI       | 🔲 Not started | `log_trial_offer` contract fn ready; no UI                     |
+| PWA raster icons     | ⚠️ Partial     | icon.svg present; PNG icons not yet generated                  |
 
 ## Roadmap
 
