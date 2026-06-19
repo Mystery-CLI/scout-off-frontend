@@ -38,10 +38,7 @@ export default function PlayerProfileSkeleton({
 
       {/* Milestones — mirrors milestone card and list item layout */}
       <div className="bg-brand-card border border-gray-800 rounded-xl p-6 animate-pulse">
-        <div
-          aria-hidden="true"
-          className="h-5 w-44 rounded bg-gray-700 mb-4"
-        />
+        <div aria-hidden="true" className="h-5 w-44 rounded bg-gray-700 mb-4" />
         <ul aria-hidden="true" className="flex flex-col gap-3">
           {Array.from({ length: 3 }).map((_, i) => (
             <li
